@@ -2,7 +2,7 @@
 
 # Daytripper
 
-Daytripper API helps you plan exciting days out, with thousands of points of location data, and dynamic journey planning.
+Daytripper API plans optimised day trips by chaining together thousands of points of location data into flexible routes.
 
 ## Features
 
