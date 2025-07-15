@@ -105,6 +105,7 @@ DEBUG=True
 - `GET /places/{id}` - Get place by id
 - `GET /places/{postcode}` - Get places within postcode
 - `GET /places/name/{name}` Get places that have the string given in the name
+- `GET /places/walk/{id}/{length}` Get walk starting at id of given length
 
 ## License
 
