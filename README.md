@@ -1,5 +1,3 @@
-
-
 # Daytripper
 
 Daytripper API plans optimised day trips by chaining together thousands of points of location data into flexible routes.
@@ -61,7 +59,6 @@ Daytripper API plans optimised day trips by chaining together thousands of point
    python3 name_of_script_of_your_choice.py
    ```
 
-
 ## Usage
 
 **Start the development server:**
@@ -108,7 +105,6 @@ DEBUG=True
 - `GET /places/{id}` - Get place by id
 - `GET /places/{postcode}` - Get places within postcode
 - `GET /places/name/{name}` Get places that have the string given in the name
-- `GET /places/crawl/{id}/{length}` Get day trip of length from particular id
 
 ## License
 
