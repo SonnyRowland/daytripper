@@ -1,6 +1,8 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.place import Place
+from geopy.distance import distance
+import numpy 
 
 class PlaceService:
     def __init__(self, db: Session):
@@ -16,3 +18,77 @@ class PlaceService:
 
     def get_places_by_name(self, name: str) -> List[Place]:
         return self.db.query(Place).filter(Place.name.like(f"%{name.capitalize()}%")).all()
+
+
+    def get_places_in_radius(self, place_id: int, radius: float) -> List[Place]:
+        place = self.db.get(Place, place_id)
+        if not place:
+            return []
+        
+        center = (place.lat, place.lng)
+
+        north_point = distance(kilometers=radius).destination(center, bearing=0)
+        east_point = distance(kilometers=radius).destination(center, bearing=90)
+        south_point = distance(kilometers=radius).destination(center, bearing=180)
+        west_point = distance(kilometers=radius).destination(center, bearing=270)
+
+        north_lat = north_point.latitude
+        east_lng = east_point.longitude
+        south_lat = south_point.latitude
+        west_lng = west_point.longitude
+
+        return self.db.query(Place).filter(Place.lat.between(south_lat, north_lat), Place.lng.between(west_lng, east_lng)).all()
+    
+    def get_nearest_place(self, place_id: int) -> Place:
+        place = self.db.get(Place, place_id)
+        if not place:
+            return []
+        
+        place_coords = (place.lat, place.lng)
+
+        nearby_places = []
+        radius = 0.5
+        while not nearby_places:
+            nearby_places = self.get_places_in_radius(place_id, radius)
+            nearby_places.remove(place)
+            radius += 0.5
+
+        dists = []
+        for neighbour in nearby_places:
+            dists.append(distance(place_coords, (neighbour.lat, neighbour.lng)).km)
+
+        return nearby_places[dists.index(min(dists))]
+        
+            
+    def get_walk(self, place_id: int, length: int, walk = []) -> List[Place]:
+        place = self.db.get(Place, place_id)
+        if not place:
+            return []
+        
+        if len(walk) == length:
+            return walk
+        
+        place_coords = (place.lat, place.lng)
+        
+        walk.append(place)
+
+        appended = False
+
+        radius = 0.5
+        dists = []
+
+        while not appended:
+            nearby_places = self.get_places_in_radius(place_id, radius)
+            nearby_places.remove(place)
+            for neighbour in nearby_places:
+                dists.append(distance(place_coords, (neighbour.lat, neighbour.lng)).km)
+            for i in range(len(nearby_places)):
+                closest_in_nearby = nearby_places[dists.index(min(dists))]
+                if(closest_in_nearby in walk):
+                    nearby_places.remove(closest_in_nearby)
+                    dists.remove(min(dists))
+                else:
+                    return self.get_walk(closest_in_nearby.id, length, walk)
+            radius += 0.5
+
+
