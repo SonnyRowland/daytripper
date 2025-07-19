@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.schemas.place import PlaceResponse
 from app.services.place_service import PlaceService
+from app.services.postcode_service import PostcodeService
 
 router = APIRouter(prefix="/places", tags=["places"])
 
@@ -31,13 +32,28 @@ def get_places_in_radius(place_id: int, radius: float, db: Session = Depends(get
     place_service = PlaceService(db)
     return place_service.get_places_in_radius(place_id, radius)
 
-@router.get("/nearest/{place_id}", response_model=PlaceResponse)
-def get_nearest_place(place_id: int, db: Session = Depends(get_db)):
+@router.get("/radius/coords/{lat}/{lng}/{radius}")
+def get_places_in_radius_coords(lat: float, lng: float, radius: float, db: Session = Depends(get_db)):
     place_service = PlaceService(db)
-    return place_service.get_nearest_place(place_id)
+    return place_service.get_places_in_radius_coords(lat, lng, radius)
+
+@router.get("/nearest/{place_id}", response_model=PlaceResponse)
+def get_nearest_by_id(place_id: int, db: Session = Depends(get_db)):
+    place_service = PlaceService(db)
+    return place_service.get_nearest_by_id(place_id)
+
+@router.get("/nearest/coords/{lat}/{lng}", response_model=PlaceResponse)
+def get_nearest_by_coords(lat: float, lng: float, db: Session = Depends(get_db)):
+    place_service = PlaceService(db)
+    return place_service.get_nearest_by_coords(lat, lng)
 
 @router.get("/walk/{place_id}/{length}", response_model=List[PlaceResponse])
 def get_walk(place_id: int, length: int, db: Session = Depends(get_db)):
     place_service = PlaceService(db)
     return place_service.get_walk(place_id, length)
+
+@router.get("/latlng/{postcode}")
+async def test(postcode: str):
+    postcode_service = PostcodeService()
+    return await postcode_service.get_coords_from_postcode(postcode)
 
