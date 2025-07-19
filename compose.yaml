@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: daytripper_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  db-init:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/daytripper_db
+    command: python3 -m app.scripts.populate_db
+    volumes:
+      - ./app/data/sample_data.json:/app/data/sample_data.json
+
+  server:
+    build:
+      context: .
+    depends_on:
+      - db-init
+    ports:
+      - 8000:8000
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/daytripper_db
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  postgres_data:
