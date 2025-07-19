@@ -2,6 +2,7 @@ from geopy.distance import distance
 from sqlalchemy.orm import Session
 
 from app.models.place import Place
+from app.services.postcode_service import PostcodeService
 
 
 class PlaceService:
@@ -18,22 +19,17 @@ class PlaceService:
             .all()
         )
 
-    def get_places_by_name(self, name: str) -> list[Place]:
-        return (
-            self.db.query(Place).filter(Place.name.like(f"%{name.capitalize()}%")).all()
-        )
-
     def get_places_in_radius(self, place_id: int, radius: float) -> list[Place]:
         place = self.db.get(Place, place_id)
         if not place:
             return []
 
-        center = (place.lat, place.lng)
+        coords = (place.lat, place.lng)
 
-        north_point = distance(kilometers=radius).destination(center, bearing=0)
-        east_point = distance(kilometers=radius).destination(center, bearing=90)
-        south_point = distance(kilometers=radius).destination(center, bearing=180)
-        west_point = distance(kilometers=radius).destination(center, bearing=270)
+        north_point = distance(kilometers=radius).destination(coords, bearing=0)
+        east_point = distance(kilometers=radius).destination(coords, bearing=90)
+        south_point = distance(kilometers=radius).destination(coords, bearing=180)
+        west_point = distance(kilometers=radius).destination(coords, bearing=270)
 
         north_lat = north_point.latitude
         east_lng = east_point.longitude
@@ -49,12 +45,35 @@ class PlaceService:
             .all()
         )
 
-    def get_nearest_place(self, place_id: int) -> Place:
+    def get_places_in_radius_coords(
+        self, lat: float, lng: float, radius=float
+    ) -> list[Place]:
+        coords = (lat, lng)
+        north_point = distance(kilometers=radius).destination(coords, bearing=0)
+        east_point = distance(kilometers=radius).destination(coords, bearing=90)
+        south_point = distance(kilometers=radius).destination(coords, bearing=180)
+        west_point = distance(kilometers=radius).destination(coords, bearing=270)
+
+        north_lat = north_point.latitude
+        east_lng = east_point.longitude
+        south_lat = south_point.latitude
+        west_lng = west_point.longitude
+
+        return (
+            self.db.query(Place)
+            .filter(
+                Place.lat.between(south_lat, north_lat),
+                Place.lng.between(west_lng, east_lng),
+            )
+            .all()
+        )
+
+    def get_nearest_by_id(self, place_id: int) -> Place:
         place = self.db.get(Place, place_id)
         if not place:
             return []
 
-        place_coords = (place.lat, place.lng)
+        coords = (place.lat, place.lng)
 
         nearby_places = []
         radius = 0.5
@@ -65,11 +84,26 @@ class PlaceService:
 
         dists = []
         for neighbour in nearby_places:
-            dists.append(distance(place_coords, (neighbour.lat, neighbour.lng)).km)
+            dists.append(distance(coords, (neighbour.lat, neighbour.lng)).km)
 
         return nearby_places[dists.index(min(dists))]
 
-    def get_walk(self, place_id: int, length: int, walk: []) -> list[Place]:
+    def get_nearest_by_coords(self, lat: float, lng: float) -> Place:
+        nearby_places = []
+        radius = 0.5
+        while not nearby_places:
+            nearby_places = self.get_places_in_radius_coords(lat, lng, radius)
+            radius += 0.5
+
+        dists = []
+        for neighbour in nearby_places:
+            dists.append(distance((lat, lng), (neighbour.lat, neighbour.lng)).km)
+
+        return nearby_places[dists.index(min(dists))]
+
+    def get_walk(self, place_id: int, length: int, walk=None) -> list[Place]:
+        if walk is None:
+            walk = []
         place = self.db.get(Place, place_id)
         if not place:
             return []
@@ -99,3 +133,9 @@ class PlaceService:
                 else:
                     return self.get_walk(closest_in_nearby.id, length, walk)
             radius += 0.5
+
+    async def get_nearest_by_postcode(self, postcode: str) -> Place:
+        postcode_service = PostcodeService()
+        [lat, lng] = await postcode_service.get_coords_from_postcode(postcode)
+
+        return {lat, lng}
