@@ -19,6 +19,9 @@ class PlaceService:
             .all()
         )
 
+    def get_places_by_name(self, name: str) -> list[Place]:
+        return self.db.query(Place).filter(Place.name.like(f"{name}")).all()
+
     def get_places_in_radius(self, place_id: int, radius: float) -> list[Place]:
         place = self.db.get(Place, place_id)
         if not place:
