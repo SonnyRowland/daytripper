@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+
 
 class PlaceResponse(BaseModel):
     id: int

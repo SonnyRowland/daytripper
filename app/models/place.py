@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.database import Base
+
 
 class Place(Base):
     __tablename__ = "camra_pubs"
