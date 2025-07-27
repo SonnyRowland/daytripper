@@ -62,6 +62,24 @@ def get_walk(place_id: int, length: int, db: Session = Depends(get_db)):
     return place_service.get_walk(place_id, length)
 
 
+# convert postcode to latlng -> coords
+# get nearest by coords -> placeid
+# get walk by id -> list[PlaceResponse]
+
+
+@router.get("/walk/postcode/{postcode}/{length}", response_model=list[PlaceResponse])
+async def get_walk_from_postcode(
+    postcode: str, length: int, db: Session = Depends(get_db)
+):
+    place_service = PlaceService(db)
+    postcode_service = PostcodeService()
+    coords = await postcode_service.get_coords_from_postcode(postcode)
+    nearest = place_service.get_nearest_by_coords(
+        coords["latitude"], coords["longitude"]
+    )
+    return place_service.get_walk(nearest.id, length)
+
+
 @router.get("/latlng/{postcode}")
 async def test(postcode: str):
     postcode_service = PostcodeService()
