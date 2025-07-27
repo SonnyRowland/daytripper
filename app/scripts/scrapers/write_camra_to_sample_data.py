@@ -1,7 +1,11 @@
+"""scrapes data from camra website and writes to json file"""
+
 import json
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
+res = []
 
 pub_names = []
 pub_addresses = []
@@ -17,24 +21,26 @@ try:
         By.CSS_SELECTOR, "span[data-lat][data-lng].location"
     )
 
-    res = []
-
-    for i in range(len(locations)):
-        lat = locations[i].get_attribute("data-lat")
+    for i, location in enumerate(locations):
+        lat = location.get_attribute("data-lat")
         lng = locations[i].get_attribute("data-lng")
-        address = locations[i].text.strip()
+        full_address = location.text.strip()
+        address = " ".join(full_address.split()[:-2])  # pylint: disable=c0103
+        postcode = " ".join(full_address.split()[-2:])  # pylint: disable=c0103
 
         res.append(
             {
                 "name": pub_names_text[i],
                 "address": address,
+                "postcode": postcode,
                 "lat": float(lat),
                 "lng": float(lng),
             }
         )
 
-    json_data = json.dumps(res, indent=2)
-
     driver.quit()
+
+    with open("../../data/sample_data.json", "w") as f:
+        json.dump(res, f)
 except Exception as e:
     print(e)

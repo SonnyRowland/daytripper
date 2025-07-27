@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 engine = create_engine(
-    "postgresql://daytripper_user:postgres@localhost:5432/daytripper_db"
+    "postgresql://daytripper_user:postgres@postgres:5432/daytripper_db"
 )
 
 res = []
