@@ -45,3 +45,21 @@ async def get_walk_from_postcode(
         coords["latitude"], coords["longitude"]
     )
     return place_service.get_walk(nearest.id, length)
+
+
+@router.get("/walk/postcode/{start}/{end}/{length}", response_model=list[PlaceResponse])
+async def walk_between_postcodes(
+    start: str, end: str, length: int, db: Session = Depends(get_db)
+):
+    """Returns a walk from postcode given of length given."""
+    place_service = PlaceService(db)
+    postcode_service = PostcodeService()
+    start_coords = await postcode_service.get_coords_from_postcode(start)
+    start_place = place_service.get_nearest_by_coords(
+        start_coords["latitude"], start_coords["longitude"]
+    )
+    end_coords = await postcode_service.get_coords_from_postcode(end)
+    end_place = place_service.get_nearest_by_coords(
+        end_coords["latitude"], end_coords["longitude"]
+    )
+    return place_service.walk_between(start_place.id, end_place.id, length)
