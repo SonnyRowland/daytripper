@@ -62,10 +62,10 @@ try:
         By.CSS_SELECTOR, "span[data-lat][data-lng].location"
     )
 
-    for i in range(len(locations)):
-        lat = locations[i].get_attribute("data-lat")
-        lng = locations[i].get_attribute("data-lng")
-        full_address = locations[i].text.strip()
+    for i, location in enumerate(locations):
+        lat = location.get_attribute("data-lat")
+        lng = location.get_attribute("data-lng")
+        full_address = location.text.strip()
         address = " ".join(full_address.split()[:-2])
         postcode = " ".join(full_address.split()[-2:])
 

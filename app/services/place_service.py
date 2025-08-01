@@ -1,3 +1,5 @@
+"""Business logic service for geographical calculations"""
+
 from geopy.distance import distance
 from sqlalchemy.orm import Session
 
