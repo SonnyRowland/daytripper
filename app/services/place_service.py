@@ -1,4 +1,4 @@
-"""Business logic service for geographical calculations"""
+"""Logic service for geographical calculations"""
 
 from geopy.distance import distance
 from sqlalchemy.orm import Session
@@ -106,6 +106,22 @@ class PlaceService:
 
         return nearby_places[dists.index(min(dists))]
 
+    def get_nearest_by_coords_excluding(
+        self, lat: float, lng: float, excluding: list[Place]
+    ) -> Place:
+        nearby_places = []
+        radius = 0.5
+        while not nearby_places:
+            nearby_places = self.get_places_in_radius_coords(lat, lng, radius)
+            nearby_places = list(set(nearby_places) - set(excluding))
+            radius += 0.5
+
+        dists = []
+        for neighbour in nearby_places:
+            dists.append(distance((lat, lng), (neighbour.lat, neighbour.lng)).km)
+
+        return nearby_places[dists.index(min(dists))]
+
     def get_walk(self, place_id: int, length: int, walk=None) -> list[Place]:
         if walk is None:
             walk = []
@@ -138,6 +154,27 @@ class PlaceService:
                 else:
                     return self.get_walk(closest_in_nearby.id, length, walk)
             radius += 0.5
+
+    def walk_between(self, start_id: int, end_id: int, length: int) -> list[Place]:
+        places = []
+        used_places = []
+        start_lat = self.get_place_by_id(start_id).lat
+        start_lng = self.get_place_by_id(start_id).lng
+        end_lat = self.get_place_by_id(end_id).lat
+        end_lng = self.get_place_by_id(end_id).lng
+
+        lat_diff = end_lat - start_lat
+        lng_diff = end_lng - start_lng
+
+        for i in range(length):
+            lat = start_lat + (i / (length - 1)) * lat_diff
+            lng = start_lng + (i / (length - 1)) * lng_diff
+
+            next_place = self.get_nearest_by_coords_excluding(lat, lng, used_places)
+            used_places.append(next_place)
+            places.append(next_place)
+
+        return places
 
     async def get_nearest_by_postcode(self, postcode: str) -> Place:
         postcode_service = PostcodeService()
