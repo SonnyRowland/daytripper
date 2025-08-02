@@ -1,9 +1,13 @@
+import logging
+
 import httpx
 from fastapi import APIRouter, HTTPException
 
 router = APIRouter(prefix="/test", tags=["test"])
 
 POSTCODE_URL = "https://api.postcodes.io/postcodes/"
+
+logger = logging.getLogger(__name__)
 
 
 @router.get("/{postcode}")
@@ -20,4 +24,5 @@ async def get_lat_lng(postcode: str):
                 "longitude": result.get("longitude"),
             }
     except Exception as err:
+        logger.error("Bad upstream response from postcodes.io")
         raise HTTPException(status_code=502, detail="bad upstream response") from err

@@ -1,10 +1,15 @@
 """Logic service for geographical calculations"""
 
+import logging
+
+from fastapi import HTTPException
 from geopy.distance import distance
 from sqlalchemy.orm import Session
 
 from app.models.place import Place
 from app.services.postcode_service import PostcodeService
+
+logger = logging.getLogger(__name__)
 
 
 class PlaceService:
@@ -12,7 +17,12 @@ class PlaceService:
         self.db = db
 
     def get_place_by_id(self, place_id: int) -> Place | None:
-        return self.db.get(Place, place_id)
+        place = self.db.get(Place, place_id)
+        if not place:
+            logger.error(f"Place with id {place_id} not found in database")
+            raise HTTPException(status_code=404, detail="Place not found")
+
+        return place
 
     def get_places_by_postcode(self, postcode: str) -> list[Place]:
         return (
@@ -26,8 +36,6 @@ class PlaceService:
 
     def get_places_in_radius(self, place_id: int, radius: float) -> list[Place]:
         place = self.db.get(Place, place_id)
-        if not place:
-            return []
 
         coords = (place.lat, place.lng)
 
@@ -75,8 +83,6 @@ class PlaceService:
 
     def get_nearest_by_id(self, place_id: int) -> Place:
         place = self.db.get(Place, place_id)
-        if not place:
-            return []
 
         coords = (place.lat, place.lng)
 
