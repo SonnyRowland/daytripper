@@ -1,6 +1,11 @@
+import logging
+
 import httpx
+from fastapi import HTTPException
 
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class PostcodeService:
@@ -20,7 +25,8 @@ class PostcodeService:
                     "longitude": result.get("longitude"),
                 }
 
-        except Exception as err:
-            raise httpx.RequestError(
+        except Exception as exc:
+            logger.error("Bad upstream response from postcodes.io")
+            raise HTTPException(
                 status_code=502, detail="bad upstream response"
-            ) from err
+            ) from exc
