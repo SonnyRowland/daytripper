@@ -1,5 +1,13 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type PubType = {
   id: number;
@@ -20,7 +28,16 @@ function App() {
     },
   });
 
-  return <p>Pub number 1984: {JSON.stringify(data?.name)}</p>;
+  return (
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>Pub number 1984</CardTitle>
+        <CardDescription>{data?.name}</CardDescription>
+      </CardHeader>
+      <CardContent>Hello</CardContent>
+      <CardFooter>Hello</CardFooter>
+    </Card>
+  );
 }
 
 export default App;
