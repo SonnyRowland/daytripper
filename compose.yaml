@@ -5,7 +5,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: daytripper_db
     ports:
-      - "5432:5432"
+      - "8080:8080"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
