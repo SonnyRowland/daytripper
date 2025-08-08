@@ -35,6 +35,8 @@ The API will be available at `http://localhost:8000`
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
+The app will be available at `http://localhost:5173`
+
 ## Development
 
 **Linting**
