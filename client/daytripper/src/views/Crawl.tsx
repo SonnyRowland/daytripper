@@ -11,12 +11,13 @@ export const Crawl = () => {
   const location = useLocation();
   const start = location.state?.start;
   const end = location.state?.end;
+  const length = location.state?.length || 5;
 
   const { error, isPending, data } = useQuery<PubType[]>({
     queryKey: ["crawl"],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/places/walk/postcode/${start}/${end}/6`
+        `http://localhost:8000/places/walk/postcode/${start}/${end}/${length}`
       );
 
       return res.data;
