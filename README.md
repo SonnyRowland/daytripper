@@ -18,9 +18,16 @@ Daytripper API plans optimised day trips by chaining together thousands of point
    cd daytripper
    ```
 
-2. **Start the application**
+2. **Start the API**
+
    ```bash
    docker-compose up --build
+   ```
+
+3. **Run vite**
+   ```bash
+   cd client/daytripper
+   pnpm run dev
    ```
 
 The API will be available at `http://localhost:8000`
