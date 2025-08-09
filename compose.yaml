@@ -13,9 +13,11 @@ services:
     build: .
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/daytripper_db
-    command: python3 -m app.scripts.populate_db
+    command: python3 wait_for_db.py
     volumes:
       - ./app/data/sample_data.json:/app/data/sample_data.json
+    depends_on:
+      - postgres
 
   server:
     build:
