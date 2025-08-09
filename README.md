@@ -18,15 +18,10 @@ Daytripper API plans optimised day trips by chaining together thousands of point
    cd daytripper
    ```
 
-2. **Start the API**
+2. **Start the app!**
 
    ```bash
-   docker-compose up --build
-   ```
-
-3. **Run vite**
-   ```bash
-   cd client/daytripper
+   pnpm install
    pnpm run dev
    ```
 
@@ -35,7 +30,7 @@ The API will be available at `http://localhost:8000`
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-The app will be available at `http://localhost:5173`
+The web app will be available at `http://localhost:5173`
 
 ## Development
 

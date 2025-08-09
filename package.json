@@ -1,12 +1,18 @@
 {
-	"dependencies": {
-		"@tailwindcss/vite": "^4.1.11",
-		"@tanstack/react-query": "^5.84.1",
-		"axios": "^1.11.0",
-		"tailwindcss": "^4.1.11"
-	},
-	"devDependencies": {
-		"@iconify/react": "^6.0.0",
-		"@types/node": "^24.1.0"
-	}
+  "name": "daytripper",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"docker-compose up --build\" \"pnpm run client:dev\"",
+    "client:dev": "cd client/daytripper && pnpm run dev",
+    "api:dev": "docker-compose up --build",
+    "setup": "echo 'Installing dependencies...' && cd client/daytripper && pnpm install && echo 'Starting application...' && cd ../.. && pnpm run dev",
+    "install:client": "cd client/daytripper && pnpm install",
+    "clean": "docker-compose down && docker system prune -f"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
 }
