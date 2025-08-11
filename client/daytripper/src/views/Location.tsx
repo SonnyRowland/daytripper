@@ -79,12 +79,20 @@ export const Location = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Input
-            className="w-[200px]"
-            placeholder="End postcode"
-            onChange={(e) => setEnd(e.target.value)}
-          />
-          <Button onClick={() => handleClick()}>Crawl</Button>
+          <form
+            className="flex flex-col gap-[12px]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleClick();
+            }}
+          >
+            <Input
+              className="w-[200px]"
+              placeholder="End postcode"
+              onChange={(e) => setEnd(e.target.value)}
+            />
+            <Button type="submit">Crawl</Button>
+          </form>
         </div>
       </div>
     </div>
