@@ -182,6 +182,28 @@ class PlaceService:
 
         return places
 
+    def crawl_between_coords(
+        self,
+        start_lat: float,
+        start_lng: float,
+        end_lat: float,
+        end_lng: float,
+        length: int,
+    ) -> list[Place]:
+        places = []
+
+        lat_diff = end_lat - start_lat
+        lng_diff = end_lng - start_lng
+
+        for i in range(length):
+            lat = start_lat + (i / (length - 1)) * lat_diff
+            lng = start_lng + (i / (length - 1)) * lng_diff
+
+            next_place = self.get_nearest_by_coords_excluding(lat, lng, places)
+            places.append(next_place)
+
+        return places
+
     async def get_nearest_by_postcode(self, postcode: str) -> Place:
         postcode_service = PostcodeService()
         [lat, lng] = await postcode_service.get_coords_from_postcode(postcode)
