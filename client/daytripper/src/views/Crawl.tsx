@@ -9,7 +9,8 @@ import { Header } from "@/components/Header";
 
 export const Crawl = () => {
   const location = useLocation();
-  const start = location.state?.start;
+  const start_lat = location.state?.latitude;
+  const start_lng = location.state?.longitude;
   const end = location.state?.end;
   const length = location.state?.length || 5;
 
@@ -17,7 +18,7 @@ export const Crawl = () => {
     queryKey: ["crawl"],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/places/walk/postcode/${start}/${end}/${length}`
+        `http://localhost:8000/places/crawl/${start_lat}/${start_lng}/${end}/${length}`
       );
 
       return res.data;

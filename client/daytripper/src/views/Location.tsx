@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { Input } from "@/components/ui/input";
@@ -12,17 +12,52 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// TODO: replace latitude -> lat and longitude -> lng
+
+type CoordsType = {
+  latitude: number;
+  longitude: number;
+};
+
 export const Location = () => {
   const navigate = useNavigate();
-
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
+  const [userLocation, setUserLocation] = useState<CoordsType | null>(null);
 
   const [length, setLength] = useState<string>("");
+  const [end, setEnd] = useState<string>("");
 
   const handleClick = () => {
-    navigate("/crawl", { state: { start, end, length } });
+    navigate("/crawl", {
+      state: {
+        latitude: userLocation?.latitude,
+        longitude: userLocation?.longitude,
+        end,
+        length,
+      },
+    });
   };
+
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
+        },
+        (error) => {
+          // TODO: Make UI nice in this instance
+          console.error(`Error getting client location: ${error}`);
+        }
+      );
+    } else {
+      // TODO: Make UI nice in this instance
+      console.error("This browser does not support geolocation");
+    }
+  };
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
 
   return (
     <div className="flex flex-col w-dvw h-dvh justify-center">
@@ -44,11 +79,6 @@ export const Location = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Input
-            className="w-[200px]"
-            placeholder="Start postcode"
-            onChange={(e) => setStart(e.target.value)}
-          />
           <Input
             className="w-[200px]"
             placeholder="End postcode"
