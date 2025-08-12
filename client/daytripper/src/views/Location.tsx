@@ -12,8 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// TODO: replace latitude -> lat and longitude -> lng
-
 type CoordsType = {
   latitude: number;
   longitude: number;
@@ -63,6 +61,11 @@ export const Location = () => {
     <div className="flex flex-col w-dvw h-dvh justify-center">
       <div className="flex flex-col justify-start items-center">
         <div className="flex flex-col gap-[12px]">
+          <Input
+            className="w-[200px]"
+            placeholder="Enter destination"
+            onChange={(e) => setEnd(e.target.value)}
+          />
           <Select onValueChange={(value) => setLength(value)} value={length}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Number of pubs" />
@@ -86,11 +89,6 @@ export const Location = () => {
               handleClick();
             }}
           >
-            <Input
-              className="w-[200px]"
-              placeholder="End postcode"
-              onChange={(e) => setEnd(e.target.value)}
-            />
             <Button type="submit">Crawl</Button>
           </form>
         </div>
