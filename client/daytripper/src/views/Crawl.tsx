@@ -6,6 +6,8 @@ import { Icon } from "@iconify/react";
 import type { PubType } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/Header";
+import { Spinner } from "@/components/ui/shadcn-io/spinner";
+import { ErrorFetchingData } from "./ErrorFetchingData";
 
 export const Crawl = () => {
   const location = useLocation();
@@ -29,7 +31,7 @@ export const Crawl = () => {
     return (
       <div className="flex flex-col w-dvw h-dvh justify-center">
         <div className="flex flex-col justify-start items-center">
-          <p>Loading...</p>
+          <Spinner />
         </div>
       </div>
     );
@@ -37,10 +39,8 @@ export const Crawl = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col w-full h-full justify-center items-center">
-        <p className="text-center">
-          We had a problem fetching your data. Please try again later
-        </p>
+      <div className="flex flex-col w-dvw h-dvh justify-center items-center">
+        <ErrorFetchingData />
       </div>
     );
   }
