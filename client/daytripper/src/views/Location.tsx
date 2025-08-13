@@ -60,6 +60,7 @@ export const Location = () => {
   return (
     <div className="flex flex-col w-dvw h-dvh justify-center">
       <div className="flex flex-col justify-start items-center">
+        <img src="/assets/crawla_logo.png" width="240px" />
         <div className="flex flex-col gap-[12px]">
           <Input
             className="w-[200px]"
