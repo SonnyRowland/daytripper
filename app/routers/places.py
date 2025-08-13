@@ -142,32 +142,34 @@ async def walk_between_postcodes(
 
 
 @router.get(
-    "/crawl/{start_lat}/{start_lng}/{end_lat}/{end_lng}/{length}",
+    "/crawl/{start_lat}/{start_lng}/{end}/{length}",
     response_model=list[PlaceResponse],
 )
 async def crawl_between_coords(
     start_lat: float,
     start_lng: float,
-    end_lat: float,
-    end_lng: float,
+    end: str,
     length: int,
     db: Session = Depends(get_db),
 ):
     try:
         place_service = PlaceService(db)
+        postcode_service = PostcodeService()
+        end_coords = await postcode_service.get_coords_from_place(end)
         start_place = place_service.get_nearest_by_coords(start_lat, start_lng)
-        end_place = place_service.get_nearest_by_coords(end_lat, end_lng)
+        end_place = place_service.get_nearest_by_coords(
+            end_coords["latitude"], end_coords["longitude"]
+        )
         return place_service.walk_between(start_place.id, end_place.id, length)
     except HTTPException:
         raise
     except SQLAlchemyError as e:
         logger.error(
-            "Database error occurred getting crawl of length %s from %s, %s to %s, %s: %s",
+            "Database error occurred getting crawl of length %s from %s, %s to %s: %s",
             length,
             start_lat,
             start_lng,
-            end_lat,
-            end_lng,
+            end,
             str(e),
         )
         raise HTTPException(status_code=500, detail="A database error occurred") from e

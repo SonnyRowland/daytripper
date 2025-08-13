@@ -14,34 +14,18 @@ export const Crawl = () => {
   const end = location.state?.end;
   const length = location.state?.length || 5;
 
-  const {
-    error: externalError,
-    isPending: externalIsPending,
-    data: externalData,
-  } = useQuery({
-    queryKey: ["locationService"],
-    queryFn: async () => {
-      const res = await axios.get(
-        `https://nominatim.openstreetmap.org/search?q=${end},london&format=json`
-      );
-
-      return { end_lat: res.data[0].lat, end_lng: res.data[0].lon };
-    },
-  });
-
   const { error, isPending, data } = useQuery<PubType[]>({
     queryKey: ["crawl"],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/places/crawl/${start_lat}/${start_lng}/${externalData?.end_lat}/${externalData?.end_lng}/${length}`
+        `http://localhost:8000/places/crawl/${start_lat}/${start_lng}/${end}/${length}`
       );
 
       return res.data;
     },
-    enabled: !!externalData,
   });
 
-  if (isPending || externalIsPending) {
+  if (isPending) {
     return (
       <div className="flex flex-col w-dvw h-dvh justify-center">
         <div className="flex flex-col justify-start items-center">
@@ -51,7 +35,7 @@ export const Crawl = () => {
     );
   }
 
-  if (error || externalError) {
+  if (error) {
     return (
       <div className="flex flex-col w-full h-full justify-center items-center">
         <p className="text-center">
