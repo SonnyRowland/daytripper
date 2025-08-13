@@ -14,6 +14,10 @@ class Settings:
         self.postcode_api_url = os.getenv(
             "POSTCODE_API_URL", "https://api.postcodes.io/postcodes/"
         )
+        self.nominatim_api_url = os.getenv(
+            "NOMINATIVE_API_URL",
+            "https://nominatim.openstreetmap.org/search?q={location},london&format=json",
+        )
 
 
 settings = Settings()
