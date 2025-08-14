@@ -8,7 +8,7 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 
-class PostcodeService:
+class GeolocationService:
     def __init__(self):
         self.postcode_url = settings.postcode_api_url
         self.nominatim_url = settings.nominatim_api_url
