@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.schemas.place import PlaceResponse
+from app.services.geolocation_service import GeolocationService
 from app.services.place_service import PlaceService
-from app.services.postcode_service import PostcodeService
 
 router = APIRouter(prefix="/places", tags=["places"])
 logger = logging.getLogger(__name__)
@@ -83,8 +83,8 @@ async def get_walk_from_postcode(
     """Returns a walk from postcode given of length given."""
     try:
         place_service = PlaceService(db)
-        postcode_service = PostcodeService()
-        coords = await postcode_service.get_coords_from_postcode(postcode)
+        geolocation_service = GeolocationService()
+        coords = await geolocation_service.get_coords_from_postcode(postcode)
         nearest = place_service.get_nearest_by_coords(
             coords["latitude"], coords["longitude"]
         )
@@ -113,12 +113,12 @@ async def walk_between_postcodes(
     """Returns a walk from postcode given of length given."""
     try:
         place_service = PlaceService(db)
-        postcode_service = PostcodeService()
-        start_coords = await postcode_service.get_coords_from_postcode(start)
+        geolocation_service = GeolocationService()
+        start_coords = await geolocation_service.get_coords_from_postcode(start)
         start_place = place_service.get_nearest_by_coords(
             start_coords["latitude"], start_coords["longitude"]
         )
-        end_coords = await postcode_service.get_coords_from_postcode(end)
+        end_coords = await geolocation_service.get_coords_from_postcode(end)
         end_place = place_service.get_nearest_by_coords(
             end_coords["latitude"], end_coords["longitude"]
         )
@@ -154,8 +154,8 @@ async def crawl_between_coords(
 ):
     try:
         place_service = PlaceService(db)
-        postcode_service = PostcodeService()
-        end_coords = await postcode_service.get_coords_from_place(end)
+        geolocation_service = GeolocationService()
+        end_coords = await geolocation_service.get_coords_from_place(end)
         start_place = place_service.get_nearest_by_coords(start_lat, start_lng)
         end_place = place_service.get_nearest_by_coords(
             end_coords["latitude"], end_coords["longitude"]

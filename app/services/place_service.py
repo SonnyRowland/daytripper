@@ -7,7 +7,7 @@ from geopy.distance import distance
 from sqlalchemy.orm import Session
 
 from app.models.place import Place
-from app.services.postcode_service import PostcodeService
+from app.services.geolocation_service import GeolocationService
 
 logger = logging.getLogger(__name__)
 
@@ -205,7 +205,7 @@ class PlaceService:
         return places
 
     async def get_nearest_by_postcode(self, postcode: str) -> Place:
-        postcode_service = PostcodeService()
-        [lat, lng] = await postcode_service.get_coords_from_postcode(postcode)
+        geolocation_service = GeolocationService()
+        [lat, lng] = await geolocation_service.get_coords_from_postcode(postcode)
 
         return {lat, lng}
