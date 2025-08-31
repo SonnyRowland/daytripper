@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router";
+import { useSearchParams } from "react-router";
 import axios from "axios";
 import { Icon } from "@iconify/react";
 
@@ -10,17 +10,17 @@ import { Spinner } from "@/components/ui/shadcn-io/spinner";
 import { ErrorFetchingData } from "./ErrorFetchingData";
 
 export const Crawl = () => {
-  const location = useLocation();
-  const start_lat = location.state?.latitude;
-  const start_lng = location.state?.longitude;
-  const end = location.state?.end;
-  const length = location.state?.length || 5;
+  const [searchParams] = useSearchParams();
 
   const { error, isPending, data } = useQuery<PubType[]>({
     queryKey: ["crawl"],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:8000/places/crawl/${start_lat}/${start_lng}/${end}/${length}`
+        `http://localhost:8000/places/crawl/${searchParams.get(
+          "lat"
+        )}/${searchParams.get("lng")}/${searchParams.get(
+          "end"
+        )}/${searchParams.get("length")}`
       );
 
       return res.data;
