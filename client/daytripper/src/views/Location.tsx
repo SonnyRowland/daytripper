@@ -25,14 +25,9 @@ export const Location = () => {
   const [end, setEnd] = useState<string>("");
 
   const handleClick = () => {
-    navigate("/crawl", {
-      state: {
-        latitude: userLocation?.latitude,
-        longitude: userLocation?.longitude,
-        end,
-        length,
-      },
-    });
+    navigate(
+      `/crawl?lat=${userLocation?.latitude}&lng=${userLocation?.longitude}&end=${end}&length=${length}`
+    );
   };
 
   const getUserLocation = () => {
