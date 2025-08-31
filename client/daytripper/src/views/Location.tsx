@@ -24,9 +24,13 @@ export const Location = () => {
   const [length, setLength] = useState<string>("");
   const [end, setEnd] = useState<string>("");
 
+  const isFormEmpty = !end.trim();
+
   const handleClick = () => {
     navigate(
-      `/crawl?lat=${userLocation?.latitude}&lng=${userLocation?.longitude}&end=${end}&length=${length}`
+      `/crawl?lat=${userLocation?.latitude}&lng=${
+        userLocation?.longitude
+      }&end=${end}&length=${length || 5}`
     );
   };
 
@@ -60,7 +64,10 @@ export const Location = () => {
           <Input
             className="w-[200px]"
             placeholder="Enter destination"
-            onChange={(e) => setEnd(e.target.value)}
+            onChange={(e) => {
+              setEnd(e.target.value);
+            }}
+            value={end}
           />
           <Select onValueChange={(value) => setLength(value)} value={length}>
             <SelectTrigger className="w-[200px]">
@@ -85,7 +92,9 @@ export const Location = () => {
               handleClick();
             }}
           >
-            <Button type="submit">Crawl</Button>
+            <Button type="submit" disabled={isFormEmpty}>
+              Crawl
+            </Button>
           </form>
         </div>
       </div>
