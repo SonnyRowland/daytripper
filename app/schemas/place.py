@@ -3,6 +3,19 @@
 from pydantic import BaseModel
 
 
+class PlaceCreate(BaseModel):
+    """Schema for creating a new place record"""
+
+    name: str
+    address: str
+    postcode: str
+    lat: float
+    lng: float
+
+    class config:  # pylint: disable=c0115
+        from_attributes = True
+
+
 class PlaceResponse(BaseModel):
     """Response schema for place data returned by the API"""
 

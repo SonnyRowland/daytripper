@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.routers import places, postcode
+from app.routers import admin, places, postcode
 
 Base.metadata.create_all(bind=engine)
 
@@ -10,6 +10,7 @@ app = FastAPI(title="Tripper API", description="Day trip planner")
 
 app.include_router(places.router)
 app.include_router(postcode.router)
+app.include_router(admin.router)
 
 origins = ["http://localhost:5173", "https://localhost:5173"]
 
