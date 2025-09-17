@@ -39,6 +39,8 @@ def write_to_db():
     parsed_data = json.loads(data)
 
     with Session(engine) as session:
+        session.query(Pub).delete()
+        session.commit()
         for pub in parsed_data:
             try:
                 session.add(
