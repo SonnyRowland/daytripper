@@ -1,6 +1,6 @@
 # Daytripper
 
-Daytripper API plans optimised day trips by chaining together thousands of points of location data into flexible routes.
+Daytripper API plans optimised day trips by chaining together thousands of points of location data into flexible routes. **Note:** this project contains images and opening times that are NOT true to the locations, and are simply included for demo purposes.
 
 ## Features
 
@@ -25,7 +25,7 @@ Daytripper API plans optimised day trips by chaining together thousands of point
    pnpm run dev
    ```
 
-The API will be available at `http://localhost:8000`
+Docker will take care of the rest and the API will be available at `http://localhost:8000`
 
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
@@ -41,6 +41,8 @@ black app/
 ruff check app/
 ruff check app/ --fix
 
+```
+
 ## Environment Variables
 
 Copy `.env.example` to `.env` and configure:
@@ -49,6 +51,8 @@ Copy `.env.example` to `.env` and configure:
 
 DATABASE_URL=postgresql://username:password@localhost:5432/daytripper_db
 DEBUG=True
+
+```
 
 ## Project Structure
 
@@ -81,10 +85,4 @@ MIT
 
 ## Contact
 
-Sonny Rowland - sonnyrowland@gmail.com
-
 Project Link: https://github.com/SonnyRowland/daytripper
-
-```
-
-```
