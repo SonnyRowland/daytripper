@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { useNavigate, useLocation } from "react-router";
 
 import {
   DropdownMenu,
@@ -6,10 +8,20 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuGroup,
+  DropdownMenuSeparator,
 } from "../components/ui/dropdown-menu";
 import { Button } from "./ui/button";
 
 export const Header = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
+  const routerLocation = useLocation();
+
+  const [isOnCrawlPage, setIsOnCrawlPage] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsOnCrawlPage(routerLocation.pathname == "/crawl");
+  }, [routerLocation.pathname]);
+
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(location.href);
   };
@@ -26,9 +38,20 @@ export const Header = ({ children }: { children: React.ReactNode }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-30">
               <DropdownMenuGroup>
-                <DropdownMenuItem onClick={copyToClipboard}>
-                  Copy link
+                <DropdownMenuItem onClick={() => navigate("/location")}>
+                  New Crawl
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                  Dashboard
+                </DropdownMenuItem>
+                {isOnCrawlPage && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={copyToClipboard}>
+                      Copy link
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
